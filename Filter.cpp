@@ -3,10 +3,13 @@
 #include "bmplib.cpp"
 #include <unistd.h>
 #include <cmath>
-#define New_Image unsigned char image[SIZE][SIZE];
+
 unsigned char image[SIZE][SIZE];
 
-// --------------Youssef-----------------
+
+// to test the code you should to creat a folder with the name "images" 
+// and put the image you want to test as long as it .bmp and 256 * 256
+// and to save the image, you should to create a folder with the name "Editing".
 
 void load_image()
 {
@@ -33,33 +36,94 @@ void save_image()
     writeGSBMP(cwd, image);
 }
 
+// --------------youssefHosssam-----------------
+// Filter 1: Black and White Image
 void Black_White()
 {
-    
+    for (int i = 0; i < SIZE; ++i){
+        for (int j = 0; j < SIZE; ++j){
+            if (image[i][j] > 127){
+                image[i][j] = 255;
+            } else {
+                image[i][j] = 0;
+            }    
+        }
+    }
 }
 
+// Filter 4: Flip Image
 void Flib_image()
 {
-    
+    cout << "Flip (h)orizontally or (v)ertically ? ";
+    char dir;
+    cin >> dir;
+    for (int i = 0; i < SIZE; ++i){
+        for (int j = 0; j < SIZE / 2; ++j) {
+            if (dir == 'h'){
+                swap(image[j][i], image[SIZE - j][i]);
+            }
+            else{
+                swap(image[i][j], image[i][SIZE - j]);
+            }
+        }
+    }
 }
 
+// Filter a: Mirror Image
 void mirror_image()
 {
-    
+    cout << "Mirror (l)eft, (r)ight, (u)pper, (d)own side? ";
+    char dir;
+    cin >> dir;
+    for (int i = 0; i < SIZE; ++i){
+        for (int j = 0; j < SIZE / 2; ++j) {
+            if (dir == 'l')
+                image[i][SIZE - j] = image[i][j];
+            else if (dir == 'r')
+                image[i][j] = image[i][SIZE - j];
+            else if (dir == 'u')
+                image[SIZE - j][i] = image[j][i];
+            else if (dir == 'd')
+                image[j][i] = image[SIZE - j][i];
+        }
+    }
 }
 
+// Filter 7: Detect Image Edges
 void detect_image_edges()
 {
-    
+    for (int i = 0; i < SIZE - 1; ++i){
+        for (int j = 0; j < SIZE; ++j) {
+            if (abs(image[i][j] - image[i + 1][j]) >= 28)
+                image[i][j] = 0;
+            else
+                image[i][j] = 255;
+        }
+    }
 }
 
-void crop_image()        // under progress
+// Filter d: Crop Image
+void crop_image()
 {
-    
+    cout << "Please enter x y l w: ";
+    int x, y, l, w;
+    y = 255 - y;
+    cin >> x >> y >> l >> w;
+    int last_x = x + w;
+    int last_y = y + l;
+    for (int i = 0 ; i < SIZE ; ++i){
+        for (int j = 0 ; j < SIZE ; ++j) {
+            if (i >= y && i <= last_y && j >= x && j <= last_x);
+            else
+                image[i][j] = 255;
+        }
+    }
 }
 
-// -------------------Eslam--------------------
+// -------------------Eslam-Sayed7--------------------
 
+
+// Filter 2: Invert Image
 void invert()
 {
     for (int i = 0; i < SIZE; ++i){
@@ -68,6 +132,8 @@ void invert()
         }
     }
 }
+
+// Filter 5: Rotate Image 
 
 void Rotate_90()
 {   // Rotating the image by 90 degrees
@@ -103,6 +169,8 @@ void Rotate_image()
         Rotate_90();
     }
 }
+
+// Filter 8: Enlarge Image 
 
 void Scaling(int row_s , int row , int column_s , int column ){
     unsigned char edited_image[SIZE][SIZE];
@@ -143,7 +211,7 @@ void Enlarge(){
     
 }
 
-
+// Filter b: Shuffle Image
 void Shuffle_Image(){
     unsigned char edited_image[SIZE][SIZE];
     #define matrix pair<pair<int , int> , pair<int , int>>
@@ -196,7 +264,7 @@ void Shuffle_Image(){
 }
 
 
-void skew_horizontal(){
+void skew_horizontal(){  // under progress
    
 }
 
@@ -208,7 +276,7 @@ void shrinkImage() {
 
 }
 
-
+//Filter 3: Merge Images
 void mergeImage()
 {
 
