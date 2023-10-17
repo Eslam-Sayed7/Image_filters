@@ -46,7 +46,7 @@ void Main_view() {
                 Rotate_image();
                 break;
             case '6':
-                darker_liter_Image();
+                darken_liten_image();
                 break;
             case '7':
                 detect_image_edges();

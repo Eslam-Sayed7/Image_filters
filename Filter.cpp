@@ -272,21 +272,190 @@ void skew_horizontal(){  // under progress
 
 // ------------Abdullah------------------------
 
+// Filter 9: Shrink Image
 void shrinkImage() {
+unsigned char newImage[SIZE][SIZE];
+    int op;
 
+    cout << "would you like to shrink the image (1/2) press 1: \n"
+            "or (1/3) press 2: \n"
+            "or(1/4) press 3: \n";
+
+    cin >> op;
+
+    switch (op) {
+
+        case 1:
+            for (int i = 0, o = 0; i < SIZE; i += 2, o++) {
+                for (int j = 0, x = 0; j < SIZE; j += 2, x++) {
+
+                    //--------Take the average pixels we are going to compress.--------------------
+
+
+                    newImage[o][x] = (image[i][j] + image[i + 1][j] + image[i][j + 1] +
+                                      image[i + 1][j + 1]) / 4;
+
+                }
+            }
+
+            for (int i = 0; i < SIZE; i++) {
+                for (int j = 0; j < SIZE; j++) {
+
+                    if (i < 128 && j < 128) {
+                        image[i][j] = newImage[i][j];
+
+                    } else {
+                        image[i][j] = 255;
+
+                    }
+                }
+            }
+            break;
+        case 2:
+            for (int i = 0, o = 0; i < SIZE; i += 3, o++) {
+                for (int j = 0, x = 0; j < SIZE; j += 3, x++) {
+
+                    //------------Take the average pixels we are going to compress.-----------------------
+
+                    newImage[o][x] =
+                            (image[i][j] + image[i][j + 1] + image[i][j + 2] + image[i + 1][j] + image[i + 1][j + 1]
+                             + image[i + 1][j + 2] + image[i + 2][j] + image[i + 2][j + 1] + image[i + 2][j + 2]) / 9;
+
+
+                }
+            }
+
+            for (int i = 0; i < SIZE; i++) {
+                for (int j = 0; j < SIZE; j++) {
+
+                    if (i < 86 && j < 86) {
+                        image[i][j] = newImage[i][j];
+
+                    } else {
+                        image[i][j] = 255;
+
+                    }
+                }
+            }
+
+            break;
+
+
+        case 3:
+            for (int i = 0, o = 0; i < SIZE; i += 4, o++) {
+                for (int j = 0, x = 0; j < SIZE; j += 4, x++) {
+
+                    //------------Take the average pixels we are going to compress.-----------------------
+
+                    newImage[o][x] =
+                            (image[i][j] + image[i][j + 1] + image[i][j + 2] + image[i][j + 3] + image[i + 1][j] +
+                             image[i + 1][j + 1]
+                             + image[i + 1][j + 2] + image[i + 1][j + 3] + image[i + 2][j] + image[i + 2][j + 1] +
+                             image[i + 2][j + 2] + image[i + 2][j + 3]
+                             + image[i + 3][j] + image[i + 3][j + 1] + image[i + 3][j + 2] + image[i + 3][j + 3]) / 16;
+
+
+                }
+            }
+
+            for (int i = 0; i < SIZE; i++) {
+                for (int j = 0; j < SIZE; j++) {
+
+                    if (i < 64 && j < 64) {
+                        image[i][j] = newImage[i][j];
+
+                    } else {
+                        image[i][j] = 255;
+
+                    }
+                }
+            }
+
+            break;
+    }
 }
 
 //Filter 3: Merge Images
 void mergeImage()
 {
+    unsigned char image2[SIZE][SIZE];
 
-   
+    //-----------------load second image------------------------
+    cout << "Enter the source second image file name: ";
+    string imageName;
+    string path = "\\images\\";
+    cin >> imageName;
+    path += imageName;
+    char cwd[PATH_MAX];
+    strcat(getcwd(cwd, sizeof(cwd)), path.c_str());
+    strcat(cwd, ".bmp");
+    readGSBMP(cwd, image2);
+
+    //------------------------------------------------------------
+
+    for (int i = 0; i < SIZE; ++i){
+        for (int j = 0; j < SIZE; ++j){
+            image[i][j] = (image[i][j] + image2[i][j]) / 2;
+        }
+    }
+            
 }
 
-void darker_liter_Image() {
-    
+// Filter 6: Darken and Lighten Image
+void darken_liten_image() {
+    cout << "Would you like to make it darker press d or lighter press l: ";
+    char op;
+    cin >> op;
+
+    for (int i = 0 ; i < SIZE ; ++i){
+        for (int j = 0 ; j < SIZE ; ++j) {
+            if (op == 'd'){
+                image[i][j] /= 2;
+            } else if (op == 'l') {
+                int tmp = (255 - image[i][j]) / 2;   
+                image[i][j] += tmp;
+            }
+        }
+    }
 }
 
+// Filter c: Blur Image
 void blurImage(){
-   
+    int x = 5;
+    while (x--) {
+        for (int i = 0; i <= SIZE; i++) {
+            for (int j = 0; j <= SIZE; j++) {
+                //-------the middile pixels----------------------
+                if (i != 0 && i != 256 && j != 0 && j != 256) {
+
+                    image[i][j] = (image[i][j] + image[i + 1][j] +
+                                   image[i - 1][j] + image[i][j + 1] + image[i][j - 1]) / 5;
+                }
+
+                //-------the sides pixels----------------------
+                if (i == 0 && j != 0 && j != 256) {
+                    image[i][j] = (image[i][j] + image[i + 1][j] + image[i][j - 1] + image[i][j + 1]) / 4;
+
+
+                } else if (i == 256 && j != 0 && j != 256) {
+                    image[i][j] = (image[i][j] + image[i][j - 1] + image[i][j + 1] + image[i - 1][j]) / 4;
+
+
+                } else if (j == 0 && i != 0 && i != 256) {
+                    image[i][j] = (image[i][j] + image[i + 1][j] + image[i - 1][j] + image[i][j + 1]) / 4;
+
+
+                } else if (j == 256 && i != 0 && i != 256) {
+                    image[i][j] = (image[i][j] + image[i - 1][j] + image[i][j - 1] + image[i + 1][j]) / 4;
+
+                }
+            }
+        }
+    }
+}
+
+// Filter f: Skew Vertically 
+void skew_verticall()
+{
+
 }
